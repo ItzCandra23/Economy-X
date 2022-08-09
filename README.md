@@ -1,2 +1,2 @@
 # Economy-X
-Add economy system for BDSX. (Fixed bug)
+Add plugin economy system for BDSX. (Fixed bug from economy-api)

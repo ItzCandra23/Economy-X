@@ -1,5 +1,5 @@
-# Economy-X
-Add plugin economy system for BDSX. (Fixed bug from economy-api)
+# Economy-X 2.0.1
+Added language and fixed bugs.
 
 # Commands
 * /mymoney - Check your money.

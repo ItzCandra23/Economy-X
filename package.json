@@ -1,0 +1,18 @@
+{
+    "name": "@bdsx/economy-x",
+    "version": "2.0.1",
+    "description": "Fix Bugs and Add language.",
+    "main": "index.js",
+    "keywords": [ "economy-x", "economy", "plugin", "bdsx"],
+    "author": "itsrabbitboy",
+    "license": "ISC",
+    "bdsxPlugin": true,
+    "scripts": {
+      "build": "tsc",
+      "watch": "tsc -w",
+      "prepare": "tsc || exit 0"
+    },
+    "devDependencies": {
+      "bdsx": "file:../bdsx"
+    }
+  }

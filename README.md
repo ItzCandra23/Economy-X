@@ -21,3 +21,5 @@ This plugin added economy system.
 * Fix language bug.
 * Added EconomyWeb class.
 * Added XCoin.
+
+[Report Bugs Here](https://github.com/ItzCandra23/Economy-X/issues)

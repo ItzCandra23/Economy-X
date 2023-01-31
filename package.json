@@ -1,22 +1,13 @@
 {
   "name": "@bdsx/economy-x",
-  "version": "2.1.0",
-  "description": "Fix Bugs and Add language.",
+  "version": "3.0.0",
+  "description": "Stable version.",
   "main": "index.js",
-  "keywords": ["economy-x", "economy", "plugin", "bdsx"],
-  "author": "itzcandra23 <https://github.com/ItzCandra23",
+  "keywords": ["economy-x", "economy", "plugin", "BDSX"],
+  "author": "ItzCandra23",
   "license": "ISC",
   "bdsxPlugin": true,
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "prepare": "tsc || exit 0"
-  },
   "devDependencies": {
-    "@types/node": "^12.20.36",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
-    "eslint": "^7.32.0",
     "bdsx": "file:../bdsx"
   }
 }

@@ -1,5 +1,5 @@
-# Economy-X 2.1.0
-This plugin added economy system.
+# Economy-X
+This plugin added economy system in BDSX Server.
 
 # Commands
 * /mymoney - `Check your money.`
@@ -23,5 +23,6 @@ This plugin added economy system.
 * Added XCoin.
 
 # Other
+* [Github](https://github.com/ItzCandra23/Economy-X)
 * [Report Bugs Here](https://github.com/ItzCandra23/Economy-X/issues)
 * [Add or Request language](https://discord.com/channels/646456965983240212/814768666741964820/1024176641536180244)

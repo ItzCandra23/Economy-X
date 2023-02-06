@@ -1,20 +1,19 @@
 import * as path from "path";
 import * as fs from "fs";
-import { events } from "bdsx/event";
-import { send } from "..";
+import { ServerPlayer } from "bdsx/bds/player";
 
 let config: {
     currency: string;
-    lang: string;
+    language: string;
 } = {
     currency: "$",
-    lang: "EN_us",
+    language: "EN_us",
 };
 
 const configPath = path.join(__dirname, "..", "config.json");
 
 try {
-    config = require(configPath)
+    config = require(configPath);
 } catch(err) {}
 
 export namespace EconomyConfig {
@@ -28,17 +27,18 @@ export namespace EconomyConfig {
     export function getCurrency(): string {
         return config.currency;
     }
-    export function getLang(): string {
-        return config.lang;
+    export function getLanguage(): string {
+        return config.language ?? "EN_us";
+    }
+    export function save(message: boolean = false, actor?: ServerPlayer): void {
+        fs.writeFile(configPath, JSON.stringify(config, null, 2), "utf8", (err) => {
+            if (message) {
+                if (err) {
+                    console.log(`[EconomyX] config.json Error! ${err}`.red);
+                    throw err;
+                }
+                else console.log(`[EconomyX] config.json Saved!`.green);
+            }
+        });
     }
 }
-
-events.serverClose.on(() => {
-    fs.writeFile(configPath, JSON.stringify(config, null, 2), "utf8", (err) => {
-        if (err) {
-            send.error(`config.json Error! ${err}`);
-            throw err;
-        }
-        else send.success(`config.json Saved!`);
-    });
-})

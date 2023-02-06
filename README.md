@@ -17,11 +17,6 @@ This plugin added economy system in BDSX Server.
 * /removemoney - `Operator`
 * /setmoney - `Operator`
 
-# Updates 2.1.0
-* Fix language bug.
-* Added EconomyWeb class.
-* Added XCoin.
-
 # Other
 * [Github](https://github.com/ItzCandra23/Economy-X)
 * [Report Bugs Here](https://github.com/ItzCandra23/Economy-X/issues)

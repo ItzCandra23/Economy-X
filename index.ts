@@ -303,7 +303,7 @@ events.playerJoin.on((ev) => {
     EconomyX.addPlayer(ev.player);
 });
 
-events.serverStop.on(() => {
+events.serverClose.on(() => {
     EconomyConfig.save(true);
     EconomyX.save(true);
 });

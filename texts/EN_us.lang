@@ -6,8 +6,8 @@ command.addmoney.d=Add player money.
 command.addmoney.r=§d%player%'s§r §amoney has been added §e%money%
 command.removemoney.d=Remove player money.
 command.removemoney.r=§d%player%'s§r §amoney has been removed §e%money%
-command.removemoney.d=Set player money.
-command.removemoney.r=§d%player%'s§r §amoney has been seted §e%money%
+command.setmoney.d=Set player money.
+command.setmoney.r=§d%player%'s§r §amoney has been seted §e%money%
 
 command.transfer.d=Transfer money to target.
 transfer.player.success=§aSuccessfully transfer §e%money% §ato §d%player%.

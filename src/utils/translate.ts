@@ -27,7 +27,7 @@ export namespace send {
 
     /**Translate text. */
     export function text(text: string): string {
-        return lang.translate(text).replace(/ō/g, "");
+        return lang.translate(text).slice(0, -1);
     }
 }
 

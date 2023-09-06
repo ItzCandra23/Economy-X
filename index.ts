@@ -1,6 +1,5 @@
 import { Player } from "bdsx/bds/player";
 import { events } from "bdsx/event";
-import { EconomyConfig } from "./src";
 import { send } from "./src/utils/message";
 import * as path from "path";
 import * as fs from "fs";
@@ -11,11 +10,18 @@ export interface PlayerEconomy {
     xcoin: number;
 }
 
+let config: {
+    currency: string;
+} = {
+    currency: "$",
+};
 let economy: PlayerEconomy[] = [];
 
+const configPath = path.join(__dirname, "config.json");
 const economyPath = path.join(__dirname, "economy.json");
 
 try {
+    config = require(configPath);
     economy = require(economyPath);
 } catch(err) {}
 
@@ -23,12 +29,12 @@ try {
 export namespace EconomyX {
     /**Get economy currency */
     export function currency(): string {
-        return EconomyConfig.getCurrency();
+        return config.currency;
     }
 
     /**Set economy currency */
     export function setCurrency(currency: string) {
-        return EconomyConfig.setCurrency(currency);
+        return config.currency=currency;
     }
 
     /**Add player economy */
@@ -55,10 +61,10 @@ export namespace EconomyX {
     }
 
     /**Add player money */
-    export function addMoney(player: Player, amount: number): boolean {
-        if (player.getXuid() === "") return false;
+    export function addMoney(player: Player, amount: number): number|null {
+        if (player.getXuid() === "") return null;
 
-        let result = false;
+        let result: number|null = null;
         const data = PlayerEconomy.getPlayer(player);
         if (!data) {
             addPlayer(player);
@@ -74,10 +80,10 @@ export namespace EconomyX {
     }
 
     /**Remove player money */
-    export function removeMoney(player: Player, amount: number): boolean {
-        if (player.getXuid() === "") return false;
+    export function removeMoney(player: Player, amount: number): number|null {
+        if (player.getXuid() === "") return null;
 
-        let result = false;
+        let result: number|null = null;
         const data = PlayerEconomy.getPlayer(player);
         if (!data) {
             addPlayer(player);
@@ -93,10 +99,10 @@ export namespace EconomyX {
     }
 
     /**Set player money */
-    export function setMoney(player: Player, amount: number): boolean {
-        if (player.getXuid() === "") return false;
+    export function setMoney(player: Player, amount: number): number|null {
+        if (player.getXuid() === "") return null;
 
-        let result = false;
+        let result: number|null = null;
         const data = PlayerEconomy.getPlayer(player);
         if (!data) {
             addPlayer(player);
@@ -169,8 +175,8 @@ export namespace EconomyX {
         }
 
         /**Add player X-Coin */
-        export function add(player: Player, amount: number): boolean {
-            if (player.getXuid() === "") return false;
+        export function add(player: Player, amount: number): number|null {
+            if (player.getXuid() === "") return null;
 
             const data = PlayerEconomy.getPlayer(player);
             if (!data) {
@@ -178,7 +184,7 @@ export namespace EconomyX {
                 return add(player, amount);
             }
 
-            let result = false;
+            let result: number|null = null;
             data.addXCoin(amount)
             .then((v) => {
                 result=v;
@@ -188,8 +194,8 @@ export namespace EconomyX {
         }
 
         /**Remove player X-Coin */
-        export function remove(player: Player, amount: number): boolean {
-            if (player.getXuid() === "") return false;
+        export function remove(player: Player, amount: number): number|null {
+            if (player.getXuid() === "") return null;
 
             const data = PlayerEconomy.getPlayer(player);
             if (!data) {
@@ -197,7 +203,7 @@ export namespace EconomyX {
                 return remove(player, amount);
             }
 
-            let result = false;
+            let result: number|null = null;
             data.removeXCoin(amount)
             .then((v) => {
                 result=v;
@@ -207,8 +213,8 @@ export namespace EconomyX {
         }
 
         /**Set player X-Coin */
-        export function set(player: Player, amount: number): boolean {
-            if (player.getXuid() === "") return false;
+        export function set(player: Player, amount: number): number|null {
+            if (player.getXuid() === "") return null;
 
             const data = PlayerEconomy.getPlayer(player);
             if (!data) {
@@ -216,7 +222,7 @@ export namespace EconomyX {
                 return set(player, amount);
             }
 
-            let result = false;
+            let result: number|null = null;
             data.setXCoin(amount)
             .then((v) => {
                 result=v;
@@ -228,10 +234,19 @@ export namespace EconomyX {
 
     /**Save */
     export function save(message: boolean = false): void {
-        fs.writeFile(economyPath, JSON.stringify(economy, null, 2), "utf8", (err) => {
+        fs.writeFile(configPath, JSON.stringify(config, null, 4), "utf8", (err) => {
             if (message) {
                 if (err) {
-                    send.error(`economy.json Error! ${err}`);
+                    send.error(`config.json ${err}`);
+                    throw err;
+                }
+                else send.success(`config.json Saved!`);
+            }
+        });
+        fs.writeFile(economyPath, JSON.stringify(economy, null, 4), "utf8", (err) => {
+            if (message) {
+                if (err) {
+                    send.error(`economy.json ${err}`);
                     throw err;
                 }
                 else send.success(`economy.json Saved!`);
@@ -269,112 +284,142 @@ export class PlayerEconomy {
     }
 
     /**Set player money */
-    async setMoney(amount: number): Promise<boolean> {
+    async setMoney(amount: number): Promise<number> {
         return new Promise((resolve, reject) => {
+            let index = -1;
+            economy.findIndex((v, i) => {
+                if (v.xuid === this.xuid) index=i;
+            });
+
+            if (index < 0) {
+                reject("Player data not found!");
+                return;
+            }
             if (amount < 0) {
-                reject("Error: Invalid value!");
+                reject("Invalid value!");
                 return;
             }
 
-            this.money=amount;
-            this.update()
-            .catch((reason) => {
-                if (reason) reject(reason);
-            });
-            resolve(true);
+            economy[index].money=amount;
+            resolve(economy[index].money);
         });
     }
 
     /**Add player money */
-    async addMoney(amount: number): Promise<boolean> {
+    async addMoney(amount: number): Promise<number> {
         return new Promise((resolve, reject) => {
+            let index = -1;
+            economy.findIndex((v, i) => {
+                if (v.xuid === this.xuid) index=i;
+            });
+
+            if (index < 0) {
+                reject("Player data not found!");
+                return;
+            }
             if (amount < 0||amount === 0) {
-                reject("Error: Invalid value!");
+                reject("Invalid value!");
                 return;
             }
 
-            this.money+=amount;
-            this.update()
-            .catch((reason) => {
-                if (reason) reject(reason);
-            });
-            resolve(true);
+            economy[index].money+=amount;
+            resolve(economy[index].money);
         });
     }
 
     /**Remove player money */
-    async removeMoney(amount: number): Promise<boolean> {
+    async removeMoney(amount: number): Promise<number> {
         return new Promise((resolve, reject) => {
+            let index = -1;
+            economy.findIndex((v, i) => {
+                if (v.xuid === this.xuid) index=i;
+            });
+
+            if (index < 0) {
+                reject("Player data not found!");
+                return;
+            }
             if (amount < 0||amount === 0) {
-                reject("Error: Invalid value!");
+                reject("Invalid value!");
                 return;
             }
             if ((this.money - amount) < 0) {
-                reject(`Error: Invalid amount!`);
+                reject(`Invalid amount!`);
                 return;
             }
 
-            this.money-=amount;
-            this.update()
-            .catch((reason) => {
-                if (reason) reject(reason);
-            });
-            resolve(true);
+            economy[index].money-=amount;
+            resolve(economy[index].money);
         });
     }
 
     /**Set player money */
-    async setXCoin(amount: number): Promise<boolean> {
+    async setXCoin(amount: number): Promise<number> {
         return new Promise((resolve, reject) => {
+            let index = -1;
+            economy.findIndex((v, i) => {
+                if (v.xuid === this.xuid) index=i;
+            });
+
+            if (index < 0) {
+                reject("Player data not found!");
+                return;
+            }
             if (amount < 0) {
-                reject("Error: Invalid value!");
+                reject("Invalid value!");
                 return;
             }
 
-            this.xcoin=amount;
-            this.update()
-            .catch((reason) => {
-                if (reason) reject(reason);
-            });
-            resolve(true);
+            economy[index].xcoin=amount;
+            resolve(economy[index].xcoin);
         });
     }
 
     /**Add player money */
-    async addXCoin(amount: number): Promise<boolean> {
+    async addXCoin(amount: number): Promise<number> {
         return new Promise((resolve, reject) => {
+            let index = -1;
+            economy.findIndex((v, i) => {
+                if (v.xuid === this.xuid) index=i;
+            });
+
+            if (index < 0) {
+                reject("Player data not found!");
+                return;
+            }
             if (amount < 0||amount === 0) {
-                reject("Error: Invalid value!");
+                reject("Invalid value!");
                 return;
             }
 
-            this.xcoin+=amount;
-            this.update()
-            .catch((reason) => {
-                if (reason) reject(reason);
-            });
-            resolve(true);
+            economy[index].xcoin+=amount;
+            resolve(economy[index].xcoin);
         });
     }
 
     /**Remove player money */
-    async removeXCoin(amount: number): Promise<boolean> {
+    async removeXCoin(amount: number): Promise<number> {
         return new Promise((resolve, reject) => {
+            let index = -1;
+            economy.findIndex((v, i) => {
+                if (v.xuid === this.xuid) index=i;
+            });
+
+            if (index < 0) {
+                reject("Player data not found!");
+                return;
+            }
             if (amount < 0||amount === 0) {
-                reject("Error: Invalid value!");
+                reject("Invalid value!");
                 return;
             }
             if ((this.xcoin - amount) < 0) {
-                reject(`Error: Invalid amount!`);
+                reject(`Invalid amount!`);
                 return;
             }
 
-            this.xcoin-=amount;
-            this.update()
-            .catch((reason) => {
-                if (reason) reject(reason);
-            });
-            resolve(true);
+            economy[index].xcoin-=amount;
+            resolve(economy[index].xcoin);
         });
     }
 
@@ -387,29 +432,10 @@ export class PlayerEconomy {
     getXCoin(): number {
         return this.xcoin;
     }
-
-    /**Update */
-    async update(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            let index = -1;
-            index = economy.findIndex((v, i) => {
-                if (v.xuid === this.xuid) return i;
-            });
-
-            if (index < 0) {
-                reject("Error: Player data not found!");
-                return;
-            }
-
-            economy[index]=this;
-            resolve();
-        });
-    }
 }
 
 events.serverOpen.on(() => {
     require("./src");
-    require("./src/command");
     send.success("Started!");
 });
 
@@ -418,7 +444,6 @@ events.playerJoin.on((ev) => {
 });
 
 events.serverClose.on(() => {
-    EconomyConfig.save(true);
     EconomyX.save(true);
 });
 

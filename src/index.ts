@@ -42,7 +42,7 @@ command.register("money", "Check player money.")
     send.msg("§aYour money is §e{money}", pl, ["{money}", `${EconomyX.currency()}${EconomyX.getMoney(pl).toLocaleString()}`]);
 }, {});
 
-command.register("transfer", "Transfer money to target.")
+command.register("pay", "Transfer money to target.")
 .overload((p, o) => {
     const entity = o.getEntity();
     if (entity === null) return;

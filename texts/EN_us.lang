@@ -1,0 +1,20 @@
+command.mymoney.d=Check your money.
+command.mymoney.r=§aYour money is §e%money%
+command.money.d=Check player money.
+command.money.r=§d%player%§r §amoney is §e%money%
+command.addmoney.d=Add player money.
+command.addmoney.r=§d%player%'s§r §amoney has been added §e%money%
+command.removemoney.d=Remove player money.
+command.removemoney.r=§d%player%'s§r §amoney has been removed §e%money%
+command.setmoney.d=Set player money.
+command.setmoney.r=§d%player%'s§r §amoney has been seted §e%money%
+
+command.transfer.d=Transfer money to target.
+transfer.player.success=§aSuccessfully transfer §e%money% §ato §d%player%.
+transfer.target.success=§aYou have transferred §e%money% §afrom §d%player%.
+transfer.player.xuidnotfound=§cYour xuid not found!
+transfer.target.xuidnotfound=§cPlayer xuid not found!
+transfer.sameplayer=§cYou can't transfer to yourself.
+
+number.invalid=§cInvalid number!
+xuid.notfound=§cXuid not found!
